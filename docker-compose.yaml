@@ -1,0 +1,36 @@
+services:
+  database:
+    image: mysql:latest
+    container_name: user-database
+    restart: always
+    ports:
+      - '3307:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: user-database
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    env_file:
+      - .env
+    container_name: 'application'
+    ports:
+      - 8081:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/user-database
+      SPRING_DATASOURCE_USERNAME: username
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_SECURITY_JWT_SECRET_KEY: bNSqFUGSRmUPTS0P5FIbOxZ8ix0BfZ1pfmd0KS1izBgSgbDul1XALg8LZIk6cafy
+      SPRING_MAIL_USERNAME: <YOUR MAIL USERNAME>
+      SPRING_MAIL_PASSWORD: <YOUR MAIL APP PASSWORD>
+
+volumes:
+  mysql_data:
